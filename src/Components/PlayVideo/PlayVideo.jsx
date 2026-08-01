@@ -31,7 +31,7 @@ await fetch(channelData_url).then(res=>res.json()).then(data=>setChannelData(dat
 
 //fetching Comments Data
 
-const comment_url = `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&videoId=${videoId}&key=${API_KEY}`
+const comment_url = `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&maxResults=50&videoId=${videoId}&key=${API_KEY}`
 await fetch(comment_url).then(res=>res.json()).then(data=>setCommentData(data.items))
 
 }
@@ -41,27 +41,28 @@ await fetch(comment_url).then(res=>res.json()).then(data=>setCommentData(data.it
   }, [videoId]);
 
   useEffect(() => {
+  if (apiData) {
     fetchOtherData();
-  }, [apiData])
+  }
+}, [apiData]);
 
   return (
     <div className="play-video">
       {/*<video src={video1} controls autoplay muted></video>*/}
       <iframe
         src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-        frameborder="0"
+        frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
       ></iframe>
       <h3>{apiData ? apiData.snippet.title : "Title Here"}</h3>
       <div className="play-video-info">
         <p>
-          <p>
   {apiData ? value_converter(apiData.statistics.viewCount) : "16K"} Views &bull;{" "}
   {apiData ? moment(apiData.snippet.publishedAt).fromNow() : ""}
 </p>
-        </p>
+        
         <div>
           <span>
             <img src={like} alt="" /> {apiData ? value_converter(apiData.statistics.likeCount) : 155}
@@ -79,7 +80,7 @@ await fetch(comment_url).then(res=>res.json()).then(data=>setCommentData(data.it
       </div>
       <hr />
       <div className="publisher">
-        <img src={channelData ? channelData.snippet.thumbnails.default.url : ""} alt="" />
+        <img src={channelData ? channelData.snippet.thumbnails.default.url : null} alt="" />
         <div>
           <p>{apiData ? apiData.snippet.channelTitle : ""}</p>
           <span>{channelData ? value_converter(channelData.statistics.subscriberCount) : "1M"}</span>
@@ -106,7 +107,7 @@ await fetch(comment_url).then(res=>res.json()).then(data=>setCommentData(data.it
             <div className="comment-action">
               <img src={like} alt="" />
               <img src={dislike} alt="" />
-              <span>244</span>
+              <span>{value_converter(item.snippet.topLevelComment.snippet.likeCount)}</span>
             </div>
           </div>
         </div>
